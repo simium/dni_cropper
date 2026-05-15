@@ -78,6 +78,7 @@ opencv-python-headless
 numpy
 pillow
 ```
+# To do (Docker related stuff)
 
 # Project structure
 ```bash
@@ -89,3 +90,65 @@ dni_cropper/
 └── .streamlit/
     └── config.toml
 ```
+
+# Docker deployment
+Build image:
+```bash
+docker build -t id-extractor .
+```
+Run container:
+```bash
+docker run -p 8501:8501 id-extractor
+```
+
+# Example Dockerfile
+Build image:
+```docker
+FROM python:3.12-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    libglib2.0-0 \
+    libgl1 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8501
+
+CMD ["streamlit", "run", "app.py", "--server.address=0.0.0.0"]
+```
+
+# Privacy
+This application is intended for local processing of sensitive documents.
+Recommendations:
+- Do not store uploaded images
+- Use HTTPS if deployed remotely
+- Add authentication before public exposure
+- Process images entirely in memory
+
+# Future improvements
+Possible next steps:
+- OCR extraction
+- Automatic glare detection
+- Blur detection
+- Mobile camera integration
+- Batch processing
+- Face masking
+- MRZ detection
+- PDF export
+- AI segmentation models
+
+# Technologies used
+- Python
+- OpenCV
+- Streamlit
+- NumPy
+- Pillow
+
+# License
+- MIT License
